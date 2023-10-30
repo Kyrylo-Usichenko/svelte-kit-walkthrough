@@ -1,6 +1,15 @@
 <script>
+	import { page } from '$app/stores';
+	import routes from '$lib/utils/routes';
+	import NavigationButtons from '../lib/components/navigation/NavButtons.svelte';
 	import Header from './Header.svelte';
 	import './styles.css';
+
+	$: currentPage = routes.find((route) => route.path === $page.url.pathname);
+
+	$: console.log(
+		`Hey, your "${currentPage?.name}" page is mounted!, your path is ${$page.url.pathname}`
+	);
 </script>
 
 <div class="app">
@@ -11,7 +20,7 @@
 	</main>
 
 	<footer>
-		<p>visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to learn SvelteKit</p>
+		<NavigationButtons />
 	</footer>
 </div>
 

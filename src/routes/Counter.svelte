@@ -1,72 +1,131 @@
 <script lang="ts">
 	import { spring } from 'svelte/motion';
+	import HappyIcon from './counter/HappyIcon.svelte';
+	import MinusIcon from './counter/MinusIcon.svelte';
+	import NeutralIcon from './counter/NeutralIcon.svelte';
+	import PlusIcon from './counter/PlusIcon.svelte';
+	import SadIcon from './counter/SadIcon.svelte';
 
 	let count = 0;
+	let changes = 0;
+	let values: number[] = [];
 
 	const displayed_count = spring();
 	$: displayed_count.set(count);
 	$: offset = modulo($displayed_count, 1);
+	$: count, (changes += 1), (values = [...values, count]);
 
 	function modulo(n: number, m: number) {
 		// handle negative numbers
 		return ((n % m) + m) % m;
 	}
+
+	function increment() {
+		count += 1;
+	}
+
+	function decrement() {
+		count -= 1;
+	}
 </script>
 
-<div class="counter">
-	<button on:click={() => (count -= 1)} aria-label="Decrease the counter by one">
-		<svg aria-hidden="true" viewBox="0 0 1 1">
-			<path d="M0,0.5 L1,0.5" />
-		</svg>
-	</button>
+<div class="wrapper">
+	<div class="counter">
+		<button on:click={decrement} aria-label="Decrease the counter by one">
+			<MinusIcon />
+		</button>
 
-	<div class="counter-viewport">
-		<div class="counter-digits" style="transform: translate(0, {100 * offset}%)">
-			<strong class="hidden" aria-hidden="true">{Math.floor($displayed_count + 1)}</strong>
-			<strong>{Math.floor($displayed_count)}</strong>
+		<div class="counter-viewport">
+			<div
+				class="counter-digits"
+				style="transform: translate(0, {100 * offset}%)"
+			>
+				<strong class="hidden" aria-hidden="true"
+					>{Math.floor($displayed_count + 1)}</strong
+				>
+				<strong>{Math.floor($displayed_count)}</strong>
+			</div>
 		</div>
+
+		<button on:click={increment} aria-label="Increase the counter by one">
+			<PlusIcon />
+		</button>
 	</div>
 
-	<button on:click={() => (count += 1)} aria-label="Increase the counter by one">
-		<svg aria-hidden="true" viewBox="0 0 1 1">
-			<path d="M0,0.5 L1,0.5 M0.5,0 L0.5,1" />
-		</svg>
-	</button>
+	<p class="changes">
+		Hey your counter have already declared <b>{changes}</b> times
+	</p>
+
+	<div>
+		{#if count === 0}
+			<p>
+				You have to choose side, increase or decrease counter, if not - this
+				sticker will not understand why you are here
+			</p>
+		{:else if count > 0}
+			<p>Seems that smile like your choice</p>
+		{:else}
+			<p>Hmm, not sure that he is happy with your choice</p>
+		{/if}
+	</div>
+
+	<div class="smile-wrapper">
+		{#if count === 0}
+			<NeutralIcon />
+		{:else if count > 0}
+			<HappyIcon />
+		{:else}
+			<SadIcon />
+		{/if}
+	</div>
+
+	<p>Your results will be displayed here</p>
+
+	<div class="values">
+		{#each values as value}
+			<p>{value}</p>
+		{/each}
+	</div>
 </div>
 
 <style>
+	.wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 20px;
+	}
 	.counter {
+		margin: 0 auto;
+		width: fit-content;
 		display: flex;
 		border-top: 1px solid rgba(0, 0, 0, 0.1);
 		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-		margin: 1rem 0;
+		& button {
+			width: 2em;
+			padding: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border: 0;
+			background-color: transparent;
+			touch-action: manipulation;
+			font-size: 2rem;
+			cursor: pointer;
+		}
+		& svg {
+			width: 25%;
+			height: 25%;
+		}
+		& path {
+			vector-effect: non-scaling-stroke;
+			stroke-width: 2px;
+			stroke: #444;
+		}
 	}
 
-	.counter button {
-		width: 2em;
-		padding: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border: 0;
-		background-color: transparent;
-		touch-action: manipulation;
-		font-size: 2rem;
-	}
-
-	.counter button:hover {
+	.counter .counter button:hover {
 		background-color: var(--color-bg-1);
-	}
-
-	svg {
-		width: 25%;
-		height: 25%;
-	}
-
-	path {
-		vector-effect: non-scaling-stroke;
-		stroke-width: 2px;
-		stroke: #444;
 	}
 
 	.counter-viewport {
@@ -98,5 +157,24 @@
 	.hidden {
 		top: -100%;
 		user-select: none;
+	}
+
+	.smile-wrapper {
+		& svg {
+			width: 70px;
+			height: 70px;
+		}
+	}
+
+	.values {
+		height: 400px;
+		width: 300px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2px;
+		overflow-x: none;
+		overflow-y: scroll;
+		border: 1px solid black;
 	}
 </style>
