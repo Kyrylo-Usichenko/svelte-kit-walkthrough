@@ -6,6 +6,10 @@ const routes = [
 	{
 		path: '/counter',
 		name: 'Counter'
+	},
+	{
+		path: '/store',
+		name: 'Store'
 	}
 ];
 
