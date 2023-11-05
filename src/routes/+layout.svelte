@@ -1,8 +1,9 @@
 <script>
 	import { page } from '$app/stores';
-	import routes from '$lib/utils/routes';
-	import NavigationButtons from '../lib/components/navigation/NavButtons.svelte';
+	import NavigationButtons from '$lib/components/navigation/NavButtons.svelte';
 	import Header from './Header.svelte';
+	import routes from './navigation/routes';
+
 	import './styles.css';
 
 	$: currentPage = routes.find((route) => route.path === $page.url.pathname);
@@ -15,8 +16,11 @@
 <div class="app">
 	<Header />
 
-	<main>
-		<slot />
+	<main class="main">
+		<div class="container">
+			<h1 class="title">{currentPage?.name}</h1>
+			<slot />
+		</div>
 	</main>
 
 	<footer>
@@ -28,35 +32,22 @@
 	.app {
 		display: flex;
 		flex-direction: column;
+		justify-content: center;
 		min-height: 100vh;
 	}
 
-	main {
+	.main {
+		margin: 52px auto 0;
+		overflow: auto;
 		flex: 1;
 		display: flex;
 		flex-direction: column;
-		padding: 1rem;
 		width: 100%;
 		max-width: 64rem;
-		margin: 0 auto;
 		box-sizing: border-box;
 	}
 
-	footer {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 12px;
-	}
-
-	footer a {
-		font-weight: bold;
-	}
-
-	@media (min-width: 480px) {
-		footer {
-			padding: 12px 0;
-		}
+	.title {
+		margin: 10px auto;
 	}
 </style>

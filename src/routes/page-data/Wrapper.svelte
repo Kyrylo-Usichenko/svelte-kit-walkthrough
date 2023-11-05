@@ -9,8 +9,8 @@
 
 <style>
 	.wrapper {
+		padding: 10px;
 		background: rgb(173, 173, 173);
-		padding: 40px;
 		border: 1px solid red;
 	}
 </style>

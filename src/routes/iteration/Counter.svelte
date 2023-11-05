@@ -1,8 +1,24 @@
 <script lang="ts">
+	import { spring } from 'svelte/motion';
+	import HappyIcon from './HappyIcon.svelte';
 	import MinusIcon from '../../lib/components/icons/MinusIcon.svelte';
+	import NeutralIcon from './NeutralIcon.svelte';
 	import PlusIcon from '../../lib/components/icons/PlusIcon.svelte';
+	import SadIcon from './SadIcon.svelte';
 
 	let count = 0;
+	let changes = 0;
+	let values: number[] = [];
+
+	const displayed_count = spring();
+	$: displayed_count.set(count);
+	$: offset = modulo($displayed_count, 1);
+	$: count, (changes += 1), (values = [...values, count]);
+
+	function modulo(n: number, m: number) {
+		// handle negative numbers
+		return ((n % m) + m) % m;
+	}
 
 	function increment() {
 		count += 1;
@@ -13,24 +29,62 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Counter</title>
-	<meta name="description" content="Counter" />
-</svelte:head>
-
 <div class="wrapper">
 	<div class="counter">
-		<button on:click={decrement}>
+		<button on:click={decrement} aria-label="Decrease the counter by one">
 			<MinusIcon />
 		</button>
 
 		<div class="counter-viewport">
-			<strong>{count}</strong>
+			<div
+				class="counter-digits"
+				style="transform: translate(0, {100 * offset}%)"
+			>
+				<strong class="hidden" aria-hidden="true"
+					>{Math.floor($displayed_count + 1)}</strong
+				>
+				<strong>{Math.floor($displayed_count)}</strong>
+			</div>
 		</div>
 
-		<button on:click={increment}>
+		<button on:click={increment} aria-label="Increase the counter by one">
 			<PlusIcon />
 		</button>
+	</div>
+
+	<p class="changes">
+		Hey your counter have already declared <b>{changes}</b> times
+	</p>
+
+	<div>
+		{#if count === 0}
+			<p>
+				You have to choose side, increase or decrease counter, if not - this
+				sticker will not understand why you are here
+			</p>
+		{:else if count > 0}
+			<p>Seems that smile like your choice</p>
+		{:else}
+			<p>Hmm, not sure that he is happy with your choice</p>
+		{/if}
+	</div>
+
+	<div class="smile-wrapper">
+		{#if count === 0}
+			<NeutralIcon />
+		{:else if count > 0}
+			<HappyIcon />
+		{:else}
+			<SadIcon />
+		{/if}
+	</div>
+
+	<p>Your results will be displayed here</p>
+
+	<div class="values">
+		{#each values as value}
+			<p>{value}</p>
+		{/each}
 	</div>
 </div>
 

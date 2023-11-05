@@ -1,24 +1,15 @@
 <script lang="ts">
-	import { spring } from 'svelte/motion';
-	import HappyIcon from './counter/HappyIcon.svelte';
-	import MinusIcon from './counter/MinusIcon.svelte';
-	import NeutralIcon from './counter/NeutralIcon.svelte';
-	import PlusIcon from './counter/PlusIcon.svelte';
-	import SadIcon from './counter/SadIcon.svelte';
+	import MinusIcon from '$lib/components/icons/MinusIcon.svelte';
+	import PlusIcon from '$lib/components/icons/PlusIcon.svelte';
+	import HappyIcon from './HappyIcon.svelte';
+	import NeutralIcon from './NeutralIcon.svelte';
+	import SadIcon from './SadIcon.svelte';
 
 	let count = 0;
 	let changes = 0;
 	let values: number[] = [];
 
-	const displayed_count = spring();
-	$: displayed_count.set(count);
-	$: offset = modulo($displayed_count, 1);
 	$: count, (changes += 1), (values = [...values, count]);
-
-	function modulo(n: number, m: number) {
-		// handle negative numbers
-		return ((n % m) + m) % m;
-	}
 
 	function increment() {
 		count += 1;
@@ -29,25 +20,24 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Counter</title>
+	<meta name="description" content="Counter" />
+</svelte:head>
+
 <div class="wrapper">
 	<div class="counter">
-		<button on:click={decrement} aria-label="Decrease the counter by one">
+		<button on:click={decrement}>
 			<MinusIcon />
 		</button>
 
 		<div class="counter-viewport">
-			<div
-				class="counter-digits"
-				style="transform: translate(0, {100 * offset}%)"
-			>
-				<strong class="hidden" aria-hidden="true"
-					>{Math.floor($displayed_count + 1)}</strong
-				>
-				<strong>{Math.floor($displayed_count)}</strong>
+			<div class="counter-digits">
+				<strong>{count}</strong>
 			</div>
 		</div>
 
-		<button on:click={increment} aria-label="Increase the counter by one">
+		<button on:click={increment}>
 			<PlusIcon />
 		</button>
 	</div>
@@ -174,7 +164,7 @@
 		align-items: center;
 		gap: 2px;
 		overflow-x: none;
-		overflow-y: scroll;
+		overflow-y: auto;
 		border: 1px solid black;
 	}
 </style>

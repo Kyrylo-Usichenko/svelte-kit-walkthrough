@@ -15,7 +15,7 @@
 
 <style>
 	.inner {
-		padding: 50px;
+		padding: 10px;
 		background: rgb(116, 116, 116);
 		border: 1px solid red;
 	}

@@ -1,8 +1,12 @@
 <script lang="ts">
-	import MinusIcon from '../../lib/components/icons/MinusIcon.svelte';
-	import PlusIcon from '../../lib/components/icons/PlusIcon.svelte';
+	import MinusIcon from '$lib/components/icons/MinusIcon.svelte';
+	import PlusIcon from '$lib/components/icons/PlusIcon.svelte';
 
 	let count = 0;
+	let changes = 0;
+	let values: number[] = [];
+
+	$: count, (changes += 1), (values = [...values, count]);
 
 	function increment() {
 		count += 1;
@@ -31,6 +35,14 @@
 		<button on:click={increment}>
 			<PlusIcon />
 		</button>
+	</div>
+
+	<p>Your results will be displayed here</p>
+
+	<div class="values">
+		{#each values as value}
+			<p>{value}</p>
+		{/each}
 	</div>
 </div>
 
